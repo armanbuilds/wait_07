@@ -99,6 +99,17 @@ body {
   align-items: center;
   justify-content: center;
   gap: clamp(1.1rem, 3.2vw, 1.85rem);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.opening-stage.is-exiting {
+  opacity: 0;
+  transform: scale(0.93) translateY(-1.2rem);
+  filter: blur(14px);
+  pointer-events: none;
 }
 
 .opening-layer {
@@ -243,6 +254,100 @@ body {
   text-shadow: 0 0 28px rgba(150, 140, 255, 0.18);
 }
 
+.start-button {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 22rem);
+  padding: clamp(0.95rem, 2.8vw, 1.25rem) clamp(1.5rem, 4vw, 2.5rem);
+  margin-top: clamp(0.2rem, 1vw, 0.6rem);
+  border: 1px solid rgba(180, 170, 255, 0.35);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02) 60%,
+    rgba(120, 100, 220, 0.08)
+  );
+  color: #f7f7fb;
+  font-family: var(--font);
+  font-size: clamp(0.9rem, 2.6vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(130, 110, 240, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.start-button__glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(160, 140, 255, 0.3),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+}
+
+.start-button__text {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 16px rgba(180, 170, 255, 0.3);
+}
+
+.start-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(200, 190, 255, 0.6);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.04) 60%,
+    rgba(140, 120, 255, 0.15)
+  );
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    0 0 36px rgba(150, 130, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.start-button:hover .start-button__glow {
+  opacity: 1;
+}
+
+.start-button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(130, 110, 240, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition-duration: 0.1s;
+}
+
+.start-button:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(176, 168, 255, 0.5),
+    0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
 .unlocked-placeholder {
   opacity: 0;
   transform: translateY(0.4rem);
@@ -372,5 +477,163 @@ body {
     opacity: 1;
     transform: none;
     filter: none;
+  }
+}
+
+/* ==========================================================================
+   Fireworks Canvas Overlay
+   ========================================================================== */
+.fireworks-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+  pointer-events: none;
+}
+
+body.is-fireworks-active {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Prank Button State Variations
+   ========================================================================== */
+.start-button.is-loading {
+  border-color: rgba(160, 140, 255, 0.7);
+  box-shadow:
+    0 0 35px rgba(140, 120, 255, 0.4),
+    inset 0 0 15px rgba(160, 140, 255, 0.2);
+  animation: button-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.start-button.is-error {
+  border-color: rgba(235, 75, 75, 0.85);
+  color: #ffdddd;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 60, 60, 0.12),
+    rgba(180, 30, 30, 0.08)
+  );
+  box-shadow:
+    0 12px 36px rgba(220, 40, 40, 0.45),
+    0 0 28px rgba(255, 80, 80, 0.35),
+    inset 0 1px 0 rgba(255, 180, 180, 0.25);
+  animation: error-shake 0.4s ease-in-out;
+}
+
+.start-button.is-glitch {
+  font-family: var(--mono);
+  border-color: rgba(0, 220, 255, 0.8);
+  color: #61f2ff;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 180, 220, 0.14),
+    rgba(220, 0, 150, 0.1)
+  );
+  box-shadow:
+    0 0 30px rgba(0, 220, 255, 0.35),
+    0 0 15px rgba(255, 0, 160, 0.3),
+    inset 0 1px 0 rgba(120, 240, 255, 0.3);
+  animation: glitch-jitter 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes button-pulse {
+  from {
+    transform: scale(0.99);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px) rotate(-1deg); }
+  40% { transform: translateX(6px) rotate(1deg); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes glitch-jitter {
+  0% { transform: translate(0, 0); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; }
+  25% { transform: translate(-2px, 1px); text-shadow: -2px 0 #ff0055, 2px 0 #00e5ff; }
+  50% { transform: translate(2px, -1px); text-shadow: 1px 0 #ff0055, -1px 0 #00e5ff; }
+  75% { transform: translate(-1px, -1px); text-shadow: -1px 0 #ff0055, 1px 0 #00e5ff; }
+  100% { transform: translate(0, 0); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; }
+}
+
+/* ==========================================================================
+   Final Reveal Stage & Typography
+   ========================================================================== */
+.reveal-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-stage.is-visible {
+  opacity: 1;
+}
+
+.reveal-card {
+  width: min(92vw, 44rem);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal-message {
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", "Segoe UI", serif;
+  font-size: clamp(1.4rem, 4.2vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fffdf5;
+  text-shadow:
+    0 0 20px rgba(255, 215, 120, 0.7),
+    0 0 45px rgba(255, 190, 80, 0.45),
+    0 0 85px rgba(255, 160, 40, 0.25);
+  opacity: 0;
+  transform: translateY(1.2rem) scale(0.96);
+  filter: blur(12px);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-message.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  animation: reveal-float 6s ease-in-out infinite alternate;
+}
+
+.reveal-message.is-leaving {
+  opacity: 0;
+  transform: translateY(-1.2rem) scale(1.03);
+  filter: blur(14px);
+}
+
+@keyframes reveal-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
   }
 }

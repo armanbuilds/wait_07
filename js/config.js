@@ -3,6 +3,8 @@
  * Change the birthday target and visit messages here only.
  */
 
+export const testMode = true;
+
 export const BIRTHDAY = {
   year: 2026,
   month: 9,
@@ -20,6 +22,8 @@ export const VISITOR = {
 export const MESSAGES = {
   experienceWaiting: "A GREAT EXPERIENCE IS WAITING FOR YOU",
   unlockedPlaceholder: "Birthday unlocked. The full experience will live here.",
+  testBirthdayPlaceholder: "HAPPY BIRTHDAY 🎉",
+  entryButtonDefault: "ENTER TO VIEW AN EXPERIENCE",
   visitor: {
     1: "SO... YOU FINALLY MADE IT HERE 👀",
     2: "DON'T BE SO IMPATIENT 😭",
@@ -29,6 +33,17 @@ export const MESSAGES = {
     6: "THE PATIENCE LEVEL IS CONCERNING 😂",
     7: "AT THIS POINT, JUST WAIT FOR SEPTEMBER 7TH 🎂😂",
   },
+};
+
+export const PRANK_MESSAGES = {
+  click1: "INITIALIZING EXPERIENCE...",
+  click2: "RUNNING ERROR... PLEASE TRY AGAIN",
+  click3: "SERVICE CRASHED... TRY AGAIN",
+};
+
+export const REVEAL_MESSAGES = {
+  message1: "HAPPY BIRTHDAY TO THE PRECIOUS PERSON OF MY LIFE",
+  message2: "HAPPY BIRTHDAY CHAUDRAY",
 };
 
 export function getVisitorMessage(visitCount) {
@@ -42,3 +57,4 @@ export function getVisitorMessage(visitCount) {
 
   return MESSAGES.visitor[visitCount];
 }
+

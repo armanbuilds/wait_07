@@ -29,6 +29,11 @@
           <p id="main-message" class="main-message"></p>
         </article>
 
+        <button id="start-button" class="start-button opening-layer" type="button" hidden>
+          <span class="start-button__glow" aria-hidden="true"></span>
+          <span class="start-button__text">ENTER TO VIEW AN EXPERIENCE</span>
+        </button>
+
         <section id="countdown" class="countdown opening-layer" aria-label="Time remaining">
           <div class="countdown-unit">
             <span id="days" class="countdown-value">00</span>
@@ -51,6 +56,14 @@
 
       <p id="unlocked-placeholder" class="unlocked-placeholder" hidden></p>
     </main>
+
+    <canvas id="fireworks-canvas" class="fireworks-canvas" aria-hidden="true" hidden></canvas>
+    
+    <div id="reveal-stage" class="reveal-stage" aria-live="polite" hidden>
+      <div id="reveal-card" class="reveal-card">
+        <h1 id="reveal-message" class="reveal-message"></h1>
+      </div>
+    </div>
 
     <script type="module" src="js/main.js"></script>
   </body>

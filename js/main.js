@@ -1,6 +1,9 @@
-import { MESSAGES, getVisitorMessage } from "./config.js";
+import { MESSAGES, getVisitorMessage, testMode } from "./config.js";
 import { recordVisit } from "./visitor.js";
 import { startCountdown } from "./countdown.js";
+import { initPrankManager } from "./prank.js";
+import { FireworksEngine } from "./fireworks.js";
+import { initRevealSequence } from "./reveal.js";
 
 const DARK_BEAT_MS = 380;
 const VISITOR_SETTLE_MS = 780;
@@ -15,12 +18,17 @@ const elements = {
   visitorMessage: document.querySelector("#visitor-message"),
   experienceBox: document.querySelector("#experience-box"),
   mainMessage: document.querySelector("#main-message"),
+  startButton: document.querySelector("#start-button"),
+  startText: document.querySelector(".start-button__text"),
   countdown: document.querySelector("#countdown"),
   days: document.querySelector("#days"),
   hours: document.querySelector("#hours"),
   minutes: document.querySelector("#minutes"),
   seconds: document.querySelector("#seconds"),
   unlocked: document.querySelector("#unlocked-placeholder"),
+  fireworksCanvas: document.querySelector("#fireworks-canvas"),
+  revealStage: document.querySelector("#reveal-stage"),
+  revealMessage: document.querySelector("#reveal-message"),
 };
 
 function wait(ms) {
@@ -45,10 +53,14 @@ function renderCountdown(remaining) {
 }
 
 function showUnlockedState() {
-  elements.openingStage.hidden = true;
-  elements.unlocked.hidden = false;
-  elements.unlocked.textContent = MESSAGES.unlockedPlaceholder;
-  elements.unlocked.classList.add("is-visible");
+  if (elements.openingStage) {
+    elements.openingStage.hidden = true;
+  }
+  if (elements.unlocked) {
+    elements.unlocked.hidden = false;
+    elements.unlocked.textContent = MESSAGES.unlockedPlaceholder;
+    elements.unlocked.classList.add("is-visible");
+  }
 }
 
 function canUsePointerTilt() {
@@ -103,12 +115,29 @@ async function playOpeningSequence(visitCount) {
   revealLayer(elements.experienceBox);
   await wait(EXPERIENCE_FOLLOW_MS);
 
-  if (!elements.unlocked.hidden) {
+  if (elements.unlocked && !elements.unlocked.hidden) {
     return;
   }
 
-  revealLayer(elements.countdown);
-  await wait(COUNTDOWN_FOLLOW_MS);
+  if (testMode) {
+    if (elements.countdown) {
+      elements.countdown.hidden = true;
+    }
+    if (elements.startButton) {
+      elements.startButton.hidden = false;
+      revealLayer(elements.startButton);
+    }
+    await wait(COUNTDOWN_FOLLOW_MS);
+  } else {
+    if (elements.startButton) {
+      elements.startButton.hidden = true;
+    }
+    if (elements.countdown) {
+      elements.countdown.hidden = false;
+      revealLayer(elements.countdown);
+    }
+    await wait(COUNTDOWN_FOLLOW_MS);
+  }
 }
 
 function init() {
@@ -121,14 +150,59 @@ function init() {
 
   initVisitorTilt();
 
-  startCountdown(
-    (remaining) => {
-      renderCountdown(remaining);
-    },
-    () => {
-      showUnlockedState();
-    }
-  );
+  // Setup Fireworks and Reveal managers
+  let fireworks = null;
+  let revealSequence = null;
+
+  if (elements.fireworksCanvas) {
+    fireworks = new FireworksEngine(elements.fireworksCanvas);
+    fireworks.init();
+  }
+
+  if (elements.revealStage && elements.revealMessage) {
+    revealSequence = initRevealSequence(
+      elements.revealStage,
+      elements.revealMessage,
+      () => {
+        if (fireworks) {
+          fireworks.enableAmbientStardust();
+        }
+      }
+    );
+  }
+
+  function handleLaunchExperience() {
+    if (!elements.openingStage) return;
+
+    elements.openingStage.classList.add("is-exiting");
+
+    window.setTimeout(() => {
+      elements.openingStage.hidden = true;
+      if (fireworks) {
+        fireworks.start(() => {
+          if (revealSequence) {
+            revealSequence.startReveal();
+          }
+        });
+      }
+    }, 750);
+  }
+
+  // Setup 4-click prank state machine on the start button
+  if (elements.startButton) {
+    initPrankManager(elements.startButton, elements.startText, handleLaunchExperience);
+  }
+
+  if (!testMode) {
+    startCountdown(
+      (remaining) => {
+        renderCountdown(remaining);
+      },
+      () => {
+        showUnlockedState();
+      }
+    );
+  }
 
   playOpeningSequence(visitCount);
 }
