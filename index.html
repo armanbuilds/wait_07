@@ -7,28 +7,46 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <main id="experience" class="experience">
-      <section id="message-stage" class="message-stage" aria-live="polite">
-        <p id="main-message" class="main-message"></p>
-      </section>
+    <div class="atmosphere" aria-hidden="true">
+      <span class="atmosphere__glow atmosphere__glow--one"></span>
+      <span class="atmosphere__glow atmosphere__glow--two"></span>
+    </div>
 
-      <section id="countdown" class="countdown" hidden>
-        <div class="countdown-unit">
-          <span id="days" class="countdown-value">00</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-unit">
-          <span id="hours" class="countdown-value">00</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-unit">
-          <span id="minutes" class="countdown-value">00</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-unit">
-          <span id="seconds" class="countdown-value">00</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
+    <main id="experience" class="experience">
+      <section id="opening-stage" class="opening-stage" aria-live="polite">
+        <article id="visitor-box" class="visitor-box opening-layer">
+          <div class="visitor-box__tilt">
+            <div class="visitor-box__frame">
+              <div class="visitor-box__surface">
+                <span class="visitor-box__sheen" aria-hidden="true"></span>
+                <p id="visitor-message" class="visitor-message"></p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article id="experience-box" class="experience-box opening-layer">
+          <p id="main-message" class="main-message"></p>
+        </article>
+
+        <section id="countdown" class="countdown opening-layer" aria-label="Time remaining">
+          <div class="countdown-unit">
+            <span id="days" class="countdown-value">00</span>
+            <span class="countdown-label">Days</span>
+          </div>
+          <div class="countdown-unit">
+            <span id="hours" class="countdown-value">00</span>
+            <span class="countdown-label">Hours</span>
+          </div>
+          <div class="countdown-unit">
+            <span id="minutes" class="countdown-value">00</span>
+            <span class="countdown-label">Minutes</span>
+          </div>
+          <div class="countdown-unit">
+            <span id="seconds" class="countdown-value">00</span>
+            <span class="countdown-label">Seconds</span>
+          </div>
+        </section>
       </section>
 
       <p id="unlocked-placeholder" class="unlocked-placeholder" hidden></p>

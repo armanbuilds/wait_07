@@ -1,13 +1,19 @@
-import { MESSAGES, getRepeatVisitMessage } from "./config.js";
+import { MESSAGES, getVisitorMessage } from "./config.js";
 import { recordVisit } from "./visitor.js";
 import { startCountdown } from "./countdown.js";
 
-const ENTRANCE_MS = 450;
-const SETTLE_MS = 700;
+const DARK_BEAT_MS = 380;
+const VISITOR_SETTLE_MS = 780;
+const EXPERIENCE_FOLLOW_MS = 560;
+const COUNTDOWN_FOLLOW_MS = 420;
 
 const elements = {
   experience: document.querySelector("#experience"),
-  messageStage: document.querySelector("#message-stage"),
+  openingStage: document.querySelector("#opening-stage"),
+  visitorBox: document.querySelector("#visitor-box"),
+  visitorTilt: document.querySelector(".visitor-box__tilt"),
+  visitorMessage: document.querySelector("#visitor-message"),
+  experienceBox: document.querySelector("#experience-box"),
   mainMessage: document.querySelector("#main-message"),
   countdown: document.querySelector("#countdown"),
   days: document.querySelector("#days"),
@@ -23,22 +29,12 @@ function wait(ms) {
   });
 }
 
-function setMessage(text) {
-  elements.mainMessage.textContent = text;
-}
+function revealLayer(element) {
+  if (!element) {
+    return;
+  }
 
-async function showMessage(text) {
-  elements.messageStage.hidden = false;
-  elements.mainMessage.classList.remove("is-visible");
-  setMessage(text);
-  await wait(40);
-  elements.mainMessage.classList.add("is-visible");
-  await wait(ENTRANCE_MS + SETTLE_MS);
-}
-
-async function hideMessage() {
-  elements.mainMessage.classList.remove("is-visible");
-  await wait(ENTRANCE_MS);
+  element.classList.add("is-visible");
 }
 
 function renderCountdown(remaining) {
@@ -48,29 +44,71 @@ function renderCountdown(remaining) {
   elements.seconds.textContent = remaining.display.seconds;
 }
 
-async function showCountdown() {
-  elements.unlocked.hidden = true;
-  elements.countdown.hidden = false;
-  await wait(40);
-  elements.countdown.classList.add("is-visible");
+function showUnlockedState() {
+  elements.openingStage.hidden = true;
+  elements.unlocked.hidden = false;
+  elements.unlocked.textContent = MESSAGES.unlockedPlaceholder;
+  elements.unlocked.classList.add("is-visible");
 }
 
-function showUnlockedState() {
-  elements.countdown.hidden = true;
-  elements.countdown.classList.remove("is-visible");
-  elements.messageStage.hidden = true;
-  elements.unlocked.hidden = false;
-  elements.unlocked.classList.add("is-visible");
-  elements.unlocked.textContent = MESSAGES.unlockedPlaceholder;
+function canUsePointerTilt() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return false;
+  }
+
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
+
+function initVisitorTilt() {
+  const tilt = elements.visitorTilt;
+
+  if (!tilt || !canUsePointerTilt()) {
+    return;
+  }
+
+  const maxTilt = 5.5;
+
+  function resetTilt() {
+    tilt.classList.remove("is-tilting");
+    tilt.style.setProperty("--tilt-x", "0deg");
+    tilt.style.setProperty("--tilt-y", "0deg");
+    elements.visitorBox.style.setProperty("--glow-x", "50%");
+    elements.visitorBox.style.setProperty("--glow-y", "50%");
+  }
+
+  tilt.addEventListener("pointermove", (event) => {
+    const bounds = tilt.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width;
+    const y = (event.clientY - bounds.top) / bounds.height;
+    const tiltX = (0.5 - y) * maxTilt;
+    const tiltY = (x - 0.5) * maxTilt;
+
+    tilt.classList.add("is-tilting");
+    tilt.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+    tilt.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+    elements.visitorBox.style.setProperty("--glow-x", `${(x * 100).toFixed(2)}%`);
+    elements.visitorBox.style.setProperty("--glow-y", `${(y * 100).toFixed(2)}%`);
+  });
+
+  tilt.addEventListener("pointerleave", resetTilt);
 }
 
 async function playOpeningSequence(visitCount) {
-  if (visitCount > 1) {
-    await showMessage(getRepeatVisitMessage(visitCount));
-    await hideMessage();
+  elements.visitorMessage.textContent = getVisitorMessage(visitCount);
+  elements.mainMessage.textContent = MESSAGES.experienceWaiting;
+
+  await wait(DARK_BEAT_MS);
+  revealLayer(elements.visitorBox);
+  await wait(VISITOR_SETTLE_MS);
+  revealLayer(elements.experienceBox);
+  await wait(EXPERIENCE_FOLLOW_MS);
+
+  if (!elements.unlocked.hidden) {
+    return;
   }
 
-  await showMessage(MESSAGES.firstVisit);
+  revealLayer(elements.countdown);
+  await wait(COUNTDOWN_FOLLOW_MS);
 }
 
 function init() {
@@ -81,6 +119,8 @@ function init() {
   const visitCount = recordVisit();
   elements.experience.dataset.visitCount = String(visitCount);
 
+  initVisitorTilt();
+
   startCountdown(
     (remaining) => {
       renderCountdown(remaining);
@@ -90,11 +130,7 @@ function init() {
     }
   );
 
-  playOpeningSequence(visitCount).then(() => {
-    if (elements.unlocked.hidden) {
-      return showCountdown();
-    }
-  });
+  playOpeningSequence(visitCount);
 }
 
 init();
