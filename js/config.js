@@ -43,7 +43,13 @@ export const PRANK_MESSAGES = {
 
 export const REVEAL_MESSAGES = {
   message1: "HAPPY BIRTHDAY TO THE PRECIOUS PERSON OF MY LIFE",
-  message2: "HAPPY BIRTHDAY CHAUDRAY",
+  message2: "HAPPY BIRTHDAY CHAUDHARY MUJEEB 🎂🎉",
+};
+
+export const CINEMATIC_MESSAGES = {
+  firstMessage: "May your life always be filled with happiness, success, and beautiful moments. ✨ May every dream you carry in your heart find its way to you, and may you always have reasons to smile. 🤍🌙 Keep shining, keep growing, and keep being the amazing person you are. ✨ May this new year of your life bring you nothing but the best. 🎂❤️",
+  secondMessage: "Once again, wishing you the happiest birthday of your life, my dear. ❤️✨",
+  signature: "from : Ch Arman",
 };
 
 export function getVisitorMessage(visitCount) {

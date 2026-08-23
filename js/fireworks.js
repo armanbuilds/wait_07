@@ -1,3 +1,5 @@
+import { stopFireworksAudio } from "./audio.js";
+
 /**
  * Premium Physically Realistic HTML5 Canvas Fireworks Engine
  */
@@ -40,9 +42,9 @@ class Rocket {
     this.dead = false;
 
     if (isFinalRocket) {
-      this.speedY = -randomRange(8.5, 9.5);
+      this.speedY = -randomRange(6.5, 7.2);
       this.speedX = 0;
-      this.gravity = 0.055;
+      this.gravity = 0.038;
       this.color = "#ffd700";
     } else {
       const distance = y - targetY;
@@ -346,7 +348,7 @@ export class FireworksEngine {
       : randomRange(this.width * 0.15, this.width * 0.85);
     const startY = this.height + 10;
     const targetY = isFinal
-      ? this.height * 0.38
+      ? this.height * 0.25
       : randomRange(this.height * 0.18, this.height * 0.48);
 
     const rocket = new Rocket(x, startY, targetY, shellType, palette, isFinal);
@@ -666,76 +668,115 @@ export class FireworksEngine {
     }
   }
 
+  disableAmbientStardust() {
+    this.ambientStardustActive = false;
+    this.stardustParticles = [];
+  }
+
   runTimeline() {
-    // Phase 1 (0s - 1.5s): Intro single rocket
+    this.activeTimers = [];
+    this.isDarkPause = false;
+
+    const scheduleInterval = (fn, ms, startAfterMs, durationMs) => {
+      const startTimer = window.setTimeout(() => {
+        if (!this.isRunning) return;
+        const intervalId = window.setInterval(() => {
+          if (!this.isRunning) {
+            clearInterval(intervalId);
+            return;
+          }
+          fn();
+        }, ms);
+        this.activeTimers.push(intervalId);
+
+        if (durationMs) {
+          const stopTimer = window.setTimeout(() => clearInterval(intervalId), durationMs);
+          this.activeTimers.push(stopTimer);
+        }
+      }, startAfterMs);
+      this.activeTimers.push(startTimer);
+    };
+
+    // 0 – 4s: INTRO (first elegant rockets, controlled pace)
     this.spawnRocket();
+    scheduleInterval(() => this.spawnRocket(), 1500, 1000, 3000);
 
-    // Phase 2 (2.0s - 5.5s): Build frequency
-    window.setTimeout(() => {
+    // 4 – 10s: BUILD (more rockets, varied launch positions, colors, shell types)
+    scheduleInterval(() => this.spawnRocket(), 850, 4000, 6000);
+
+    // 10 – 18s: CELEBRATION (increasing frequency, overlapping bursts, simultaneous rockets)
+    scheduleInterval(() => {
+      this.spawnRocket();
+      if (Math.random() < 0.5) {
+        window.setTimeout(() => this.spawnRocket(), 180);
+      }
+    }, 550, 10000, 8000);
+
+    // 18 – 24s: PEAK (larger and more frequent fireworks, multiple launches, layered explosions)
+    scheduleInterval(() => {
+      this.spawnRocket();
+      this.spawnRocket();
+    }, 420, 18000, 6000);
+
+    // 24 – 27s: GRAND FINALE (biggest fireworks, several rockets, large finale moment)
+    scheduleInterval(() => {
+      this.spawnRocket();
+      this.spawnRocket();
+      if (Math.random() < 0.6) {
+        this.spawnRocket();
+      }
+    }, 320, 24000, 3000);
+
+    // At ~27.0s: STOP MAIN SHOW & AUDIO -> GRADUAL CINEMATIC FADE
+    const finishTimer = window.setTimeout(() => {
       if (!this.isRunning) return;
-      const buildInterval = window.setInterval(() => {
-        if (!this.isRunning) {
-          clearInterval(buildInterval);
-          return;
-        }
-        this.spawnRocket();
-      }, 850);
 
-      window.setTimeout(() => clearInterval(buildInterval), 3500);
-    }, 2000);
+      // Clear all active launch timers
+      this.activeTimers.forEach((id) => {
+        clearInterval(id);
+        clearTimeout(id);
+      });
 
-    // Phase 3 (6.0s - 10.5s): Celebration overlapping bursts
-    window.setTimeout(() => {
-      if (!this.isRunning) return;
-      const celebrationInterval = window.setInterval(() => {
-        if (!this.isRunning) {
-          clearInterval(celebrationInterval);
-          return;
-        }
-        this.spawnRocket();
-        if (Math.random() < 0.45) {
-          window.setTimeout(() => this.spawnRocket(), 180);
-        }
-      }, 550);
+      // Stop audio completely
+      stopFireworksAudio();
 
-      window.setTimeout(() => clearInterval(celebrationInterval), 4500);
-    }, 6000);
+      // Begin gradual fade: increase background darkening alpha over time
+      this.isFadingOut = true;
+      this.fadeAlpha = 0.18; // Start from normal trail alpha
+      this.fadeStartTime = performance.now();
+      this.fadeDuration = 2000; // 2 seconds of gradual darkening
 
-    // Phase 4 (11.0s - 13.5s): Grand Finale
-    window.setTimeout(() => {
-      if (!this.isRunning) return;
-      const finaleInterval = window.setInterval(() => {
-        if (!this.isRunning) {
-          clearInterval(finaleInterval);
-          return;
-        }
-        this.spawnRocket();
-        this.spawnRocket();
-      }, 350);
+      // Launch final rocket 1.2s into the fade (screen is ~60% darker)
+      const finalRocketTimer = window.setTimeout(() => {
+        if (!this.isRunning) return;
+        this.spawnRocket(true); // isFinalRocket = true
+      }, 1200);
 
-      window.setTimeout(() => {
-        clearInterval(finaleInterval);
-        // Spawn one final massive finale shell burst rocket
-        this.spawnRocket();
-      }, 2400);
-    }, 11000);
+      this.activeTimers.push(finalRocketTimer);
 
-    // Final Rocket Reveal Phase (16.0s): Single deliberate golden rocket
-    window.setTimeout(() => {
-      if (!this.isRunning) return;
-      this.spawnRocket(true); // isFinalRocket = true
-    }, 16000);
+    }, 27000);
+
+    this.activeTimers.push(finishTimer);
   }
 
   loop() {
-    if (!this.isRunning && this.particles.length === 0 && this.rockets.length === 0) {
+    if (!this.isRunning && this.particles.length === 0 && this.rockets.length === 0 && !this.ambientStardustActive && !this.isFadingOut) {
       this.animationFrameId = null;
       return;
     }
 
     this.ctx.save();
-    // Fade out previous canvas content with translucent dark rect for motion trails
-    this.ctx.fillStyle = "rgba(5, 5, 6, 0.18)";
+
+    // Gradual fade: increase darkening alpha over time during fade-out
+    let trailAlpha = 0.18;
+    if (this.isFadingOut) {
+      const elapsed = performance.now() - this.fadeStartTime;
+      const progress = Math.min(elapsed / this.fadeDuration, 1);
+      // Ease from 0.18 to 0.55 — screen gets progressively darker
+      trailAlpha = 0.18 + progress * 0.37;
+    }
+
+    this.ctx.fillStyle = `rgba(5, 5, 6, ${trailAlpha})`;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     // Render sky ambient flash on explosion

@@ -2,62 +2,65 @@ import { MESSAGES, PRANK_MESSAGES } from "./config.js";
 
 /**
  * Manages the 4-click theatrical prank state sequence.
+ * 
+ * Click 1: "INITIALIZING EXPERIENCE..." (loading state)
+ * Click 2: "RUNNING ERROR... PLEASE TRY AGAIN" (error state)
+ * Click 3: "SERVICE CRASHED... TRY AGAIN" (glitch state)
+ * Click 4: Launches main fireworks experience
  */
 export function initPrankManager(buttonElement, buttonTextElement, onPrankComplete) {
   let clickCount = 0;
-  let isTransitioning = false;
+  let isDebouncing = false;
 
   const defaultText = MESSAGES.entryButtonDefault || "ENTER TO VIEW AN EXPERIENCE";
 
-  function setButtonState(text, stateClass) {
+  function getTextElement() {
     if (buttonTextElement) {
-      buttonTextElement.textContent = text;
+      return buttonTextElement;
     }
-    buttonElement.classList.remove("is-loading", "is-error", "is-glitch");
-    if (stateClass) {
-      buttonElement.classList.add(stateClass);
+    if (buttonElement) {
+      return buttonElement.querySelector(".start-button__text") || buttonElement;
     }
+    return null;
   }
 
-  function resetToDefaultState() {
-    setButtonState(defaultText, null);
-    buttonElement.disabled = false;
-    isTransitioning = false;
+  function setButtonState(text, stateClass) {
+    const textEl = getTextElement();
+    if (textEl) {
+      textEl.textContent = text;
+    }
+    if (buttonElement) {
+      buttonElement.classList.remove("is-loading", "is-error", "is-glitch");
+      if (stateClass) {
+        buttonElement.classList.add(stateClass);
+      }
+    }
   }
 
   function handleClick(event) {
     if (event) {
       event.preventDefault();
+      event.stopPropagation();
     }
 
-    if (isTransitioning || buttonElement.disabled) {
+    if (!buttonElement || isDebouncing) {
       return;
     }
 
+    // Debounce rapid double-clicks (250ms)
+    isDebouncing = true;
+    window.setTimeout(() => {
+      isDebouncing = false;
+    }, 250);
+
     clickCount += 1;
-    isTransitioning = true;
 
     if (clickCount === 1) {
-      buttonElement.disabled = true;
       setButtonState(PRANK_MESSAGES.click1, "is-loading");
-
-      window.setTimeout(() => {
-        resetToDefaultState();
-      }, 1300);
     } else if (clickCount === 2) {
-      buttonElement.disabled = true;
       setButtonState(PRANK_MESSAGES.click2, "is-error");
-
-      window.setTimeout(() => {
-        resetToDefaultState();
-      }, 1400);
     } else if (clickCount === 3) {
-      buttonElement.disabled = true;
       setButtonState(PRANK_MESSAGES.click3, "is-glitch");
-
-      window.setTimeout(() => {
-        resetToDefaultState();
-      }, 1500);
     } else if (clickCount >= 4) {
       buttonElement.disabled = true;
       buttonElement.classList.remove("is-loading", "is-error", "is-glitch");
@@ -67,12 +70,20 @@ export function initPrankManager(buttonElement, buttonTextElement, onPrankComple
     }
   }
 
-  buttonElement.addEventListener("click", handleClick);
+  if (buttonElement) {
+    buttonElement.addEventListener("click", handleClick);
+    // Ensure initial text is ready
+    setButtonState(defaultText, null);
+  }
 
   return {
     reset() {
       clickCount = 0;
-      resetToDefaultState();
+      isDebouncing = false;
+      if (buttonElement) {
+        buttonElement.disabled = false;
+      }
+      setButtonState(defaultText, null);
     },
     getClickCount() {
       return clickCount;

@@ -61,7 +61,70 @@
     
     <div id="reveal-stage" class="reveal-stage" aria-live="polite" hidden>
       <div id="reveal-card" class="reveal-card">
-        <h1 id="reveal-message" class="reveal-message"></h1>
+        <span class="reveal-card__border" aria-hidden="true"></span>
+        <span class="reveal-card__glow" aria-hidden="true"></span>
+        <div class="reveal-card__inner">
+          <h1 id="reveal-message" class="reveal-message"></h1>
+        </div>
+      </div>
+    </div>
+
+    <div id="cinematic-stage" class="cinematic-stage" aria-live="polite" hidden>
+      <div class="cinematic-bg" aria-hidden="true"></div>
+      <div class="cinematic-vignette" aria-hidden="true"></div>
+      
+      <div id="cinematic-card" class="cinematic-card">
+        <span class="cinematic-card__border" aria-hidden="true"></span>
+        <span class="cinematic-card__glow" aria-hidden="true"></span>
+        
+        <!-- Symmetrical Indian Wedding Decor Inspired Floral Motifs -->
+        <div class="floral-motif floral-motif--tl" aria-hidden="true">
+          <svg viewBox="0 0 40 40" class="floral-svg">
+            <path d="M4 36 C4 18, 18 4, 36 4 M8 32 C12 20, 20 12, 32 8" stroke="currentColor" fill="none" stroke-width="1.2"/>
+            <circle cx="10" cy="10" r="2.5" fill="currentColor"/>
+            <circle cx="22" cy="7" r="1.8" fill="currentColor"/>
+            <circle cx="7" cy="22" r="1.8" fill="currentColor"/>
+            <path d="M10 10 Q16 4 22 7 Q14 14 10 10 Z" fill="currentColor" opacity="0.7"/>
+            <path d="M10 10 Q4 16 7 22 Q14 14 10 10 Z" fill="currentColor" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="floral-motif floral-motif--tr" aria-hidden="true">
+          <svg viewBox="0 0 40 40" class="floral-svg">
+            <path d="M36 36 C36 18, 22 4, 4 4 M32 32 C28 20, 20 12, 8 8" stroke="currentColor" fill="none" stroke-width="1.2"/>
+            <circle cx="30" cy="10" r="2.5" fill="currentColor"/>
+            <circle cx="18" cy="7" r="1.8" fill="currentColor"/>
+            <circle cx="33" cy="22" r="1.8" fill="currentColor"/>
+            <path d="M30 10 Q24 4 18 7 Q26 14 30 10 Z" fill="currentColor" opacity="0.7"/>
+            <path d="M30 10 Q36 16 33 22 Q26 14 30 10 Z" fill="currentColor" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="floral-motif floral-motif--bl" aria-hidden="true">
+          <svg viewBox="0 0 40 40" class="floral-svg">
+            <path d="M4 4 C4 22, 18 36, 36 36 M8 8 C12 20, 20 28, 32 32" stroke="currentColor" fill="none" stroke-width="1.2"/>
+            <circle cx="10" cy="30" r="2.5" fill="currentColor"/>
+            <circle cx="22" cy="33" r="1.8" fill="currentColor"/>
+            <circle cx="7" cy="18" r="1.8" fill="currentColor"/>
+            <path d="M10 30 Q16 36 22 33 Q14 26 10 30 Z" fill="currentColor" opacity="0.7"/>
+            <path d="M10 30 Q4 24 7 18 Q14 26 10 30 Z" fill="currentColor" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="floral-motif floral-motif--br" aria-hidden="true">
+          <svg viewBox="0 0 40 40" class="floral-svg">
+            <path d="M36 4 C36 22, 22 36, 4 36 M32 8 C28 20, 20 28, 8 32" stroke="currentColor" fill="none" stroke-width="1.2"/>
+            <circle cx="30" cy="30" r="2.5" fill="currentColor"/>
+            <circle cx="18" cy="33" r="1.8" fill="currentColor"/>
+            <circle cx="33" cy="18" r="1.8" fill="currentColor"/>
+            <path d="M30 30 Q24 36 18 33 Q26 26 30 30 Z" fill="currentColor" opacity="0.7"/>
+            <path d="M30 30 Q36 24 33 18 Q26 26 30 30 Z" fill="currentColor" opacity="0.7"/>
+          </svg>
+        </div>
+
+        <div class="cinematic-card__inner">
+          <p id="cinematic-text" class="cinematic-text"></p>
+          <div id="cinematic-signature" class="cinematic-signature" hidden>
+            <span class="cinematic-signature__text">from : Ch Arman</span>
+          </div>
+        </div>
       </div>
     </div>
 

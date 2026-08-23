@@ -488,7 +488,7 @@ body {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 50;
+  z-index: 110;
   pointer-events: none;
 }
 
@@ -586,25 +586,74 @@ body.is-fireworks-active {
 }
 
 .reveal-card {
+  position: relative;
   width: min(92vw, 44rem);
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.8rem, 4.5vw, 3.2rem);
+  border-radius: var(--radius);
+  background: rgba(8, 8, 14, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 215, 120, 0.4);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(255, 200, 100, 0.22),
+    inset 0 0 30px rgba(255, 215, 120, 0.08);
+  isolation: isolate;
+  overflow: hidden;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-card__border {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 225, 140, 0.75) 0%,
+    rgba(255, 180, 80, 0.2) 35%,
+    rgba(255, 230, 150, 0.65) 70%,
+    rgba(255, 160, 40, 0.25) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-glow-pulse 4.5s ease-in-out infinite alternate;
+}
+
+.reveal-card__glow {
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 215, 120, 0.14),
+    transparent 65%
+  );
+  opacity: 0.7;
+}
+
+.reveal-card__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
 
 .reveal-message {
   margin: 0;
   font-family: "Georgia", "Times New Roman", "Segoe UI", serif;
-  font-size: clamp(1.4rem, 4.2vw, 2.6rem);
+  font-size: clamp(1.4rem, 4.2vw, 2.5rem);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.45;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #fffdf5;
   text-shadow:
-    0 0 20px rgba(255, 215, 120, 0.7),
+    0 0 20px rgba(255, 215, 120, 0.75),
     0 0 45px rgba(255, 190, 80, 0.45),
     0 0 85px rgba(255, 160, 40, 0.25);
   opacity: 0;
@@ -629,11 +678,268 @@ body.is-fireworks-active {
   filter: blur(14px);
 }
 
+@keyframes border-glow-pulse {
+  from {
+    opacity: 0.65;
+    box-shadow: inset 0 0 15px rgba(255, 215, 120, 0.1);
+  }
+  to {
+    opacity: 1;
+    box-shadow: inset 0 0 35px rgba(255, 215, 120, 0.25);
+  }
+}
+
 @keyframes reveal-float {
   from {
     transform: translateY(0);
   }
   to {
     transform: translateY(-8px);
+  }
+}
+
+/* ==========================================================================
+   Soft Pinkish-Gray Cinematic Final Scene & Floral Ornamental Card
+   ========================================================================== */
+.cinematic-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cinematic-stage.is-visible {
+  opacity: 1;
+}
+
+.cinematic-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    circle at 50% 42%,
+    #3e2d36 0%,
+    #2b1f26 40%,
+    #1e151b 70%,
+    #120c10 100%
+  );
+  animation: ambient-blush-drift 22s ease-in-out infinite alternate;
+}
+
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 48%,
+    rgba(0, 0, 0, 0.52) 100%
+  );
+}
+
+.cinematic-card {
+  position: relative;
+  z-index: 2;
+  width: min(65vw, 42rem);
+  padding: clamp(2.4rem, 5vw, 4rem) clamp(2rem, 5.2vw, 3.6rem);
+  border-radius: var(--radius);
+  background: rgba(12, 10, 15, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 215, 140, 0.45);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.65),
+    0 0 35px rgba(255, 190, 210, 0.22),
+    inset 0 0 30px rgba(255, 215, 120, 0.08);
+  isolation: isolate;
+  overflow: hidden;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(15px) scale(0.94);
+  filter: blur(8px);
+  transition:
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematic-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.cinematic-card.is-leaving {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.96);
+  filter: blur(10px);
+}
+
+.cinematic-card__border {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 225, 140, 0.8) 0%,
+    rgba(255, 180, 100, 0.25) 25%,
+    rgba(255, 210, 160, 0.7) 50%,
+    rgba(255, 160, 80, 0.2) 75%,
+    rgba(255, 230, 150, 0.75) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-glow-pulse 4.5s ease-in-out infinite alternate;
+}
+
+.cinematic-card__glow {
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 215, 120, 0.14),
+    transparent 65%
+  );
+  opacity: 0.7;
+}
+
+/* Symmetrical Floral Motifs (Indian Wedding Decor Inspired) */
+.floral-motif {
+  position: absolute;
+  width: clamp(26px, 5.5vw, 40px);
+  height: clamp(26px, 5.5vw, 40px);
+  pointer-events: none;
+  z-index: 3;
+  color: rgba(255, 220, 140, 0.75);
+  filter: drop-shadow(0 0 6px rgba(255, 200, 100, 0.4));
+  transition: opacity 0.8s ease;
+}
+
+.floral-motif--tl {
+  top: clamp(8px, 2vw, 14px);
+  left: clamp(8px, 2vw, 14px);
+}
+
+.floral-motif--tr {
+  top: clamp(8px, 2vw, 14px);
+  right: clamp(8px, 2vw, 14px);
+}
+
+.floral-motif--bl {
+  bottom: clamp(8px, 2vw, 14px);
+  left: clamp(8px, 2vw, 14px);
+}
+
+.floral-motif--br {
+  bottom: clamp(8px, 2vw, 14px);
+  right: clamp(8px, 2vw, 14px);
+}
+
+.floral-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cinematic-card__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cinematic-text {
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", "Segoe UI", serif;
+  font-size: clamp(1.05rem, 3vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.75;
+  color: #fff4f7;
+  text-shadow:
+    0 0 14px rgba(255, 230, 240, 0.35),
+    0 0 30px rgba(255, 190, 210, 0.18);
+  text-align: center;
+  word-break: break-word;
+}
+
+.cinematic-char {
+  display: inline;
+  opacity: 0;
+  filter: blur(3px);
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+.cinematic-char.is-printed {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.cinematic-signature {
+  align-self: flex-end;
+  margin-top: clamp(1.2rem, 3vw, 2rem);
+  margin-right: 0.5rem;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: clamp(0.82rem, 2vw, 0.98rem);
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: rgba(255, 225, 235, 0.82);
+  text-shadow: 0 0 10px rgba(255, 200, 220, 0.3);
+  opacity: 0;
+  transform: translateY(0.3rem);
+  filter: blur(4px);
+  transition:
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematic-signature.is-printed {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@keyframes ambient-blush-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-1.5%, 2%, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.02);
+  }
+}
+
+@media (max-width: 640px) {
+  .cinematic-card {
+    width: min(88vw, 34rem);
+    padding: 2.2rem 1.6rem 2.2rem 1.6rem;
+  }
+
+  .cinematic-text {
+    font-size: clamp(0.95rem, 3.8vw, 1.2rem);
+    line-height: 1.65;
+  }
+
+  .cinematic-signature {
+    margin-top: 1.2rem;
+    font-size: 0.84rem;
   }
 }

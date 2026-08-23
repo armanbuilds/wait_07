@@ -4,6 +4,7 @@ import { startCountdown } from "./countdown.js";
 import { initPrankManager } from "./prank.js";
 import { FireworksEngine } from "./fireworks.js";
 import { initRevealSequence } from "./reveal.js";
+import { startFireworksAudio } from "./audio.js";
 
 const DARK_BEAT_MS = 380;
 const VISITOR_SETTLE_MS = 780;
@@ -29,6 +30,10 @@ const elements = {
   fireworksCanvas: document.querySelector("#fireworks-canvas"),
   revealStage: document.querySelector("#reveal-stage"),
   revealMessage: document.querySelector("#reveal-message"),
+  cinematicStage: document.querySelector("#cinematic-stage"),
+  cinematicCard: document.querySelector("#cinematic-card"),
+  cinematicText: document.querySelector("#cinematic-text"),
+  cinematicSignature: document.querySelector("#cinematic-signature"),
 };
 
 function wait(ms) {
@@ -163,9 +168,18 @@ function init() {
     revealSequence = initRevealSequence(
       elements.revealStage,
       elements.revealMessage,
+      elements.cinematicStage,
+      elements.cinematicCard,
+      elements.cinematicText,
+      elements.cinematicSignature,
       () => {
         if (fireworks) {
           fireworks.enableAmbientStardust();
+        }
+      },
+      () => {
+        if (fireworks) {
+          fireworks.disableAmbientStardust();
         }
       }
     );
@@ -179,6 +193,9 @@ function init() {
     window.setTimeout(() => {
       elements.openingStage.hidden = true;
       if (fireworks) {
+        // Start 4-loop audio synchronized with ~27s fireworks show
+        startFireworksAudio();
+
         fireworks.start(() => {
           if (revealSequence) {
             revealSequence.startReveal();
