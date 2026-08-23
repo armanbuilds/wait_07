@@ -161,18 +161,16 @@ body {
   width: 220%;
   height: 220%;
   transform: translate(-50%, -50%);
-  background: conic-gradient(
-    from 0deg,
-    rgba(90, 200, 255, 0) 0deg,
-    rgba(90, 200, 255, 0.15) 40deg,
-    #7ee7ff 78deg,
-    #8b7cff 118deg,
-    #e06bff 158deg,
-    #5b8cff 198deg,
-    rgba(90, 200, 255, 0.12) 240deg,
-    transparent 280deg,
-    transparent 360deg
-  );
+  background: conic-gradient(from 0deg,
+      rgba(90, 200, 255, 0) 0deg,
+      rgba(90, 200, 255, 0.15) 40deg,
+      #7ee7ff 78deg,
+      #8b7cff 118deg,
+      #e06bff 158deg,
+      #5b8cff 198deg,
+      rgba(90, 200, 255, 0.12) 240deg,
+      transparent 280deg,
+      transparent 360deg);
   animation: border-travel 7.5s linear infinite;
 }
 
@@ -193,12 +191,10 @@ body {
   z-index: 1;
   border-radius: calc(var(--radius) - 1.5px);
   padding: clamp(1.35rem, 4.2vw, 2.1rem) clamp(1.2rem, 4vw, 2.4rem);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.045),
-    rgba(255, 255, 255, 0.012) 38%,
-    transparent
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.012) 38%,
+      transparent);
 }
 
 .visitor-box__sheen {
@@ -206,11 +202,9 @@ body {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(
-    22rem circle at var(--glow-x) var(--glow-y),
-    rgba(176, 168, 255, 0.14),
-    transparent 52%
-  );
+  background: radial-gradient(22rem circle at var(--glow-x) var(--glow-y),
+      rgba(176, 168, 255, 0.14),
+      transparent 52%);
   opacity: 0.85;
 }
 
@@ -265,12 +259,10 @@ body {
   margin-top: clamp(0.2rem, 1vw, 0.6rem);
   border: 1px solid rgba(180, 170, 255, 0.35);
   border-radius: var(--radius);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.02) 60%,
-    rgba(120, 100, 220, 0.08)
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.02) 60%,
+      rgba(120, 100, 220, 0.08));
   color: #f7f7fb;
   font-family: var(--font);
   font-size: clamp(0.9rem, 2.6vw, 1.05rem);
@@ -297,11 +289,9 @@ body {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(160, 140, 255, 0.3),
-    transparent 70%
-  );
+  background: radial-gradient(circle at 50% 50%,
+      rgba(160, 140, 255, 0.3),
+      transparent 70%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.35s ease;
@@ -317,12 +307,10 @@ body {
 .start-button:hover {
   transform: translateY(-2px) scale(1.02);
   border-color: rgba(200, 190, 255, 0.6);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.04) 60%,
-    rgba(140, 120, 255, 0.15)
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04) 60%,
+      rgba(140, 120, 255, 0.15));
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.5),
     0 0 36px rgba(150, 130, 255, 0.3),
@@ -411,10 +399,12 @@ body {
     transform: translateY(1.5rem) scale(0.92);
     filter: blur(16px);
   }
+
   58% {
     opacity: 1;
     filter: blur(0);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -429,6 +419,7 @@ body {
 }
 
 @keyframes frame-breathe {
+
   0%,
   100% {
     box-shadow:
@@ -436,6 +427,7 @@ body {
       0 18px 50px rgba(0, 0, 0, 0.35),
       0 0 36px rgba(110, 90, 200, 0.1);
   }
+
   50% {
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.045),
@@ -448,6 +440,7 @@ body {
   from {
     transform: translate3d(0, 0, 0) scale(1);
   }
+
   to {
     transform: translate3d(4%, -3%, 0) scale(1.08);
   }
@@ -465,6 +458,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .atmosphere__glow,
   .visitor-box__frame,
   .visitor-box__frame::before {
@@ -488,7 +482,13 @@ body {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 110;
+  /* FIX: was z-index:110, which sat ABOVE .reveal-stage (100). Because the
+     fireworks engine is intentionally kept alive after the finale (its
+     ambient-stardust mode is reused behind the birthday messages), its
+     per-frame dark-trail fillRect was painting over the reveal-stage text
+     every frame, hiding "HAPPY BIRTHDAY..." completely. Moving the canvas
+     below both text stages fixes this without touching the reveal timing. */
+  z-index: 90;
   pointer-events: none;
 }
 
@@ -510,11 +510,9 @@ body.is-fireworks-active {
 .start-button.is-error {
   border-color: rgba(235, 75, 75, 0.85);
   color: #ffdddd;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 60, 60, 0.12),
-    rgba(180, 30, 30, 0.08)
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 60, 60, 0.12),
+      rgba(180, 30, 30, 0.08));
   box-shadow:
     0 12px 36px rgba(220, 40, 40, 0.45),
     0 0 28px rgba(255, 80, 80, 0.35),
@@ -526,11 +524,9 @@ body.is-fireworks-active {
   font-family: var(--mono);
   border-color: rgba(0, 220, 255, 0.8);
   color: #61f2ff;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 180, 220, 0.14),
-    rgba(220, 0, 150, 0.1)
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 180, 220, 0.14),
+      rgba(220, 0, 150, 0.1));
   box-shadow:
     0 0 30px rgba(0, 220, 255, 0.35),
     0 0 15px rgba(255, 0, 160, 0.3),
@@ -543,6 +539,7 @@ body.is-fireworks-active {
     transform: scale(0.99);
     opacity: 0.85;
   }
+
   to {
     transform: scale(1.02);
     opacity: 1;
@@ -550,19 +547,54 @@ body.is-fireworks-active {
 }
 
 @keyframes error-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px) rotate(-1deg); }
-  40% { transform: translateX(6px) rotate(1deg); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-6px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translateX(6px) rotate(1deg);
+  }
+
+  60% {
+    transform: translateX(-4px);
+  }
+
+  80% {
+    transform: translateX(4px);
+  }
 }
 
 @keyframes glitch-jitter {
-  0% { transform: translate(0, 0); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; }
-  25% { transform: translate(-2px, 1px); text-shadow: -2px 0 #ff0055, 2px 0 #00e5ff; }
-  50% { transform: translate(2px, -1px); text-shadow: 1px 0 #ff0055, -1px 0 #00e5ff; }
-  75% { transform: translate(-1px, -1px); text-shadow: -1px 0 #ff0055, 1px 0 #00e5ff; }
-  100% { transform: translate(0, 0); text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff; }
+  0% {
+    transform: translate(0, 0);
+    text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff;
+  }
+
+  25% {
+    transform: translate(-2px, 1px);
+    text-shadow: -2px 0 #ff0055, 2px 0 #00e5ff;
+  }
+
+  50% {
+    transform: translate(2px, -1px);
+    text-shadow: 1px 0 #ff0055, -1px 0 #00e5ff;
+  }
+
+  75% {
+    transform: translate(-1px, -1px);
+    text-shadow: -1px 0 #ff0055, 1px 0 #00e5ff;
+  }
+
+  100% {
+    transform: translate(0, 0);
+    text-shadow: 2px 0 #ff0055, -2px 0 #00e5ff;
+  }
 }
 
 /* ==========================================================================
@@ -612,13 +644,11 @@ body.is-fireworks-active {
   border-radius: inherit;
   pointer-events: none;
   padding: 1.5px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 225, 140, 0.75) 0%,
-    rgba(255, 180, 80, 0.2) 35%,
-    rgba(255, 230, 150, 0.65) 70%,
-    rgba(255, 160, 40, 0.25) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 225, 140, 0.75) 0%,
+      rgba(255, 180, 80, 0.2) 35%,
+      rgba(255, 230, 150, 0.65) 70%,
+      rgba(255, 160, 40, 0.25) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -629,11 +659,9 @@ body.is-fireworks-active {
   position: absolute;
   inset: -40%;
   pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 215, 120, 0.14),
-    transparent 65%
-  );
+  background: radial-gradient(circle at 50% 50%,
+      rgba(255, 215, 120, 0.14),
+      transparent 65%);
   opacity: 0.7;
 }
 
@@ -683,6 +711,7 @@ body.is-fireworks-active {
     opacity: 0.65;
     box-shadow: inset 0 0 15px rgba(255, 215, 120, 0.1);
   }
+
   to {
     opacity: 1;
     box-shadow: inset 0 0 35px rgba(255, 215, 120, 0.25);
@@ -693,6 +722,7 @@ body.is-fireworks-active {
   from {
     transform: translateY(0);
   }
+
   to {
     transform: translateY(-8px);
   }
@@ -723,13 +753,11 @@ body.is-fireworks-active {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(
-    circle at 50% 42%,
-    #3e2d36 0%,
-    #2b1f26 40%,
-    #1e151b 70%,
-    #120c10 100%
-  );
+  background: radial-gradient(circle at 50% 42%,
+      #3e2d36 0%,
+      #2b1f26 40%,
+      #1e151b 70%,
+      #120c10 100%);
   animation: ambient-blush-drift 22s ease-in-out infinite alternate;
 }
 
@@ -738,11 +766,9 @@ body.is-fireworks-active {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(
-    circle at 50% 50%,
-    transparent 48%,
-    rgba(0, 0, 0, 0.52) 100%
-  );
+  background: radial-gradient(circle at 50% 50%,
+      transparent 48%,
+      rgba(0, 0, 0, 0.52) 100%);
 }
 
 .cinematic-card {
@@ -789,14 +815,12 @@ body.is-fireworks-active {
   border-radius: inherit;
   pointer-events: none;
   padding: 1.5px;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 225, 140, 0.8) 0%,
-    rgba(255, 180, 100, 0.25) 25%,
-    rgba(255, 210, 160, 0.7) 50%,
-    rgba(255, 160, 80, 0.2) 75%,
-    rgba(255, 230, 150, 0.75) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 225, 140, 0.8) 0%,
+      rgba(255, 180, 100, 0.25) 25%,
+      rgba(255, 210, 160, 0.7) 50%,
+      rgba(255, 160, 80, 0.2) 75%,
+      rgba(255, 230, 150, 0.75) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -807,11 +831,9 @@ body.is-fireworks-active {
   position: absolute;
   inset: -40%;
   pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 215, 120, 0.14),
-    transparent 65%
-  );
+  background: radial-gradient(circle at 50% 50%,
+      rgba(255, 215, 120, 0.14),
+      transparent 65%);
   opacity: 0.7;
 }
 
@@ -919,9 +941,11 @@ body.is-fireworks-active {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+
   50% {
     transform: translate3d(-1.5%, 2%, 0) scale(1.04);
   }
+
   100% {
     transform: translate3d(2%, -1.5%, 0) scale(1.02);
   }

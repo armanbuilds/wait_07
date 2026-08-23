@@ -41,10 +41,13 @@ export function initRevealSequence(
     }
   }
 
+  let isRunning = false;
+
   async function startReveal() {
-    if (!revealStageElement || !revealMessageElement) {
+    if (isRunning || !revealStageElement || !revealMessageElement) {
       return;
     }
+    isRunning = true;
 
     // Step 1: Unhide stage container (on black screen + sparkles)
     revealStageElement.hidden = false;

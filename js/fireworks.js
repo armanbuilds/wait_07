@@ -298,6 +298,15 @@ export class FireworksEngine {
     // Responsive particle density multiplier
     this.isMobile = this.width < 768;
     this.densityMultiplier = this.isMobile ? 0.55 : 1.0;
+
+    // PERF FIX: hard ceiling on concurrently-alive explosion particles.
+    // During the 18-27s "peak/finale" window the timeline can spawn 2-3
+    // rockets every ~350ms, each bursting 90-275 particles. With nothing
+    // capping that, overlapping bursts could push particle counts into the
+    // thousands, and every particle draw uses globalCompositeOperation
+    // "lighter" plus trail strokes - that's what caused the visible lag
+    // right at the finale. This cap keeps the show dense without runaway growth.
+    this.maxActiveParticles = this.isMobile ? 380 : 750;
   }
 
   start(onFinalRocketDetonated) {
@@ -368,10 +377,19 @@ export class FireworksEngine {
     }
 
     if (isFinalRocket) {
+      // The finale explosion always renders fully, regardless of the budget.
       this.createFinalGoldExplosion(x, y);
       if (typeof this.onFinalRocketDetonated === "function") {
         this.onFinalRocketDetonated();
       }
+      return;
+    }
+
+    // PERF FIX: if the screen is already saturated with particles, skip
+    // creating a brand new dense burst (a rocket still rises and pops with
+    // a flash/smoke, it just won't add another 90-275 particles on top of
+    // an already-overloaded frame). Keeps peak moments dense without lag.
+    if (this.particles.length >= this.maxActiveParticles) {
       return;
     }
 

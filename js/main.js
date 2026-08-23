@@ -185,8 +185,10 @@ function init() {
     );
   }
 
+  let experienceLaunched = false;
   function handleLaunchExperience() {
-    if (!elements.openingStage) return;
+    if (experienceLaunched || !elements.openingStage) return;
+    experienceLaunched = true;
 
     elements.openingStage.classList.add("is-exiting");
 
