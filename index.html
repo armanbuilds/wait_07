@@ -57,6 +57,136 @@
       <p id="unlocked-placeholder" class="unlocked-placeholder" hidden></p>
     </main>
 
+    <!-- Premium Birthday Cake-Cutting Ceremony -->
+    <section id="cake-stage" class="cake-stage" aria-live="polite" hidden>
+      <div class="ceremony-particles" aria-hidden="true"></div>
+      <div id="ceremony-panel" class="ceremony-panel">
+        <p id="ceremony-copy" class="ceremony-copy"></p>
+        <div id="ceremony-actions" class="ceremony-actions" hidden>
+          <button id="ceremony-yes" class="ceremony-button ceremony-button--yes" type="button">YES</button>
+          <button id="ceremony-no" class="ceremony-button ceremony-button--no" type="button">NO</button>
+        </div>
+      </div>
+      <div id="ceremony-loader" class="ceremony-loader" hidden aria-label="Loading"><span class="ceremony-loader__ring"></span><span class="ceremony-loader__line"></span></div>
+      <button id="ceremony-show" class="ceremony-button ceremony-button--show" type="button" hidden>SHOW ME</button>
+      <div id="cake-intro" class="cake-intro" hidden>It’s that time of the year...<br />Be ready! 🎂✨</div>
+      <div id="cake-video-frame" class="cake-video-frame" hidden>
+        <video id="cake-video" class="cake-video" preload="metadata" playsinline><source src="cutting.mp4" type="video/mp4" /></video>
+      </div>
+      <div class="cake-decorations" aria-hidden="true">
+        <!-- Floating Pastel Balloons -->
+        <div class="cake-balloon cake-balloon--1">
+          <svg viewBox="0 0 50 70" class="balloon-svg"><path d="M25 0 C40 0, 50 15, 50 35 C50 55, 30 65, 27 68 L23 68 C20 65, 0 55, 0 35 C0 15, 10 0, 25 0 Z" fill="#ffb6c1"/><path d="M22 68 L28 68 L26 72 L24 72 Z" fill="#ff9aa2"/><path d="M25 72 Q20 85 28 98" stroke="#d4a5b8" fill="none" stroke-width="1.2"/><ellipse cx="14" cy="20" rx="5" ry="10" fill="#ffffff" opacity="0.45" transform="rotate(-20 14 20)"/></svg>
+        </div>
+        <div class="cake-balloon cake-balloon--2">
+          <svg viewBox="0 0 50 70" class="balloon-svg"><path d="M25 0 C40 0, 50 15, 50 35 C50 55, 30 65, 27 68 L23 68 C20 65, 0 55, 0 35 C0 15, 10 0, 25 0 Z" fill="#b5e2fa"/><path d="M22 68 L28 68 L26 72 L24 72 Z" fill="#8ecae6"/><path d="M25 72 Q30 85 22 98" stroke="#90b8cc" fill="none" stroke-width="1.2"/><ellipse cx="14" cy="20" rx="5" ry="10" fill="#ffffff" opacity="0.45" transform="rotate(-20 14 20)"/></svg>
+        </div>
+        <div class="cake-balloon cake-balloon--3">
+          <svg viewBox="0 0 50 70" class="balloon-svg"><path d="M25 0 C40 0, 50 15, 50 35 C50 55, 30 65, 27 68 L23 68 C20 65, 0 55, 0 35 C0 15, 10 0, 25 0 Z" fill="#dfccf1"/><path d="M22 68 L28 68 L26 72 L24 72 Z" fill="#c3aed6"/><path d="M25 72 Q18 85 26 98" stroke="#b09fc4" fill="none" stroke-width="1.2"/><ellipse cx="14" cy="20" rx="5" ry="10" fill="#ffffff" opacity="0.45" transform="rotate(-20 14 20)"/></svg>
+        </div>
+        <div class="cake-balloon cake-balloon--4">
+          <svg viewBox="0 0 50 70" class="balloon-svg"><path d="M25 0 C40 0, 50 15, 50 35 C50 55, 30 65, 27 68 L23 68 C20 65, 0 55, 0 35 C0 15, 10 0, 25 0 Z" fill="#ffe5b4"/><path d="M22 68 L28 68 L26 72 L24 72 Z" fill="#ffd180"/><path d="M25 72 Q32 85 24 98" stroke="#d6b885" fill="none" stroke-width="1.2"/><ellipse cx="14" cy="20" rx="5" ry="10" fill="#ffffff" opacity="0.45" transform="rotate(-20 14 20)"/></svg>
+        </div>
+
+        <!-- Hanging Ribbons and Streamers -->
+        <div class="cake-streamer cake-streamer--l"></div>
+        <div class="cake-streamer cake-streamer--r"></div>
+      </div>
+
+      <!-- Ceremony Title Header -->
+      <div class="cake-ceremony-header">
+        <h2 class="cake-title">THE BIRTHDAY CEREMONY</h2>
+        <p class="cake-subtitle">One special moment before the show begins ✨</p>
+      </div>
+
+      <!-- Centerpiece Stage: Characters & 3-Tier Cake -->
+      <div class="cake-stage-container">
+        <!-- Cartoon Celebration Characters -->
+        <div class="cake-characters" aria-hidden="true">
+          <!-- Character 1 (Top Left) -->
+          <div class="cake-char cake-char--1">
+            <div class="char-hat char-hat--pink"><span class="hat-pom"></span></div>
+            <div class="char-head"><div class="char-face"><span class="eye eye--l"></span><span class="eye eye--r"></span><span class="smile"></span></div></div>
+            <div class="char-body"><div class="char-arm char-arm--waving"></div></div>
+          </div>
+
+          <!-- Character 2 (Top Right) -->
+          <div class="cake-char cake-char--2">
+            <div class="char-hat char-hat--blue"><span class="hat-pom"></span></div>
+            <div class="char-head"><div class="char-face"><span class="eye eye--l"></span><span class="eye eye--r"></span><span class="smile"></span></div></div>
+            <div class="char-body"><div class="char-arm char-arm--cheer"></div></div>
+          </div>
+
+          <!-- Character 3 (Bottom Left - The Cake Cutter) -->
+          <div class="cake-char cake-char--3 cake-char--cutter">
+            <div class="char-hat char-hat--gold"><span class="hat-pom"></span></div>
+            <div class="char-head"><div class="char-face"><span class="eye eye--l"></span><span class="eye eye--r"></span><span class="smile smile--excited"></span></div></div>
+            <div class="char-body">
+              <div class="char-arm char-arm--cutter">
+                <div class="cake-knife"><span class="knife-blade"></span><span class="knife-handle"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Character 4 (Bottom Right) -->
+          <div class="cake-char cake-char--4">
+            <div class="char-hat char-hat--purple"><span class="hat-pom"></span></div>
+            <div class="char-head"><div class="char-face"><span class="eye eye--l"></span><span class="eye eye--r"></span><span class="smile"></span></div></div>
+            <div class="char-body"><div class="char-arm char-arm--clap"></div></div>
+          </div>
+        </div>
+
+        <!-- 3-Tier Birthday Cake Centerpiece -->
+        <div class="cake-centerpiece">
+          <div class="cake-structure">
+            <!-- Candles on Top Tier -->
+            <div class="cake-candles">
+              <div class="cake-candle cake-candle--1"><div class="candle-flame"></div><div class="candle-wax"></div></div>
+              <div class="cake-candle cake-candle--2"><div class="candle-flame"></div><div class="candle-wax"></div></div>
+              <div class="cake-candle cake-candle--3"><div class="candle-flame"></div><div class="candle-wax"></div></div>
+            </div>
+
+            <!-- Tier 3 (Top) -->
+            <div class="cake-tier cake-tier--top">
+              <div class="tier-frosting"></div>
+              <div class="tier-decorations"><span class="gold-piping"></span></div>
+            </div>
+
+            <!-- Tier 2 (Middle) -->
+            <div class="cake-tier cake-tier--mid">
+              <div class="tier-frosting"></div>
+              <div class="tier-decorations"><span class="rose-flower"></span><span class="rose-flower"></span></div>
+            </div>
+
+            <!-- Tier 1 (Bottom Base) -->
+            <div class="cake-tier cake-tier--base">
+              <div class="tier-frosting"></div>
+              <div class="tier-decorations"><span class="pearl-row"></span></div>
+            </div>
+
+            <!-- Cut Line & Crumb Sparks -->
+            <div id="cake-cut-line" class="cake-cut-line" aria-hidden="true">
+              <span class="cut-sparkle cut-sparkle--1"></span>
+              <span class="cut-sparkle cut-sparkle--2"></span>
+              <span class="cut-sparkle cut-sparkle--3"></span>
+            </div>
+          </div>
+
+          <!-- Luxury Pedestal Cake Stand -->
+          <div class="cake-stand">
+            <div class="stand-plate"></div>
+            <div class="stand-pillar"></div>
+            <div class="stand-base"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post-cutting celebration message -->
+      <div id="cake-footer-message" class="cake-footer-message" hidden>
+        <span class="cake-footer-text">LET THE CELEBRATION BEGIN ✨</span>
+      </div>
+    </section>
+
     <canvas id="fireworks-canvas" class="fireworks-canvas" aria-hidden="true" hidden></canvas>
     
     <div id="reveal-stage" class="reveal-stage" aria-live="polite" hidden>

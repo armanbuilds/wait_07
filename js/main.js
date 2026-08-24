@@ -2,6 +2,7 @@ import { MESSAGES, getVisitorMessage, testMode } from "./config.js";
 import { recordVisit } from "./visitor.js";
 import { startCountdown } from "./countdown.js";
 import { initPrankManager } from "./prank.js";
+import { initCakeCeremony } from "./cake.js";
 import { FireworksEngine } from "./fireworks.js";
 import { initRevealSequence } from "./reveal.js";
 import { startFireworksAudio } from "./audio.js";
@@ -27,6 +28,7 @@ const elements = {
   minutes: document.querySelector("#minutes"),
   seconds: document.querySelector("#seconds"),
   unlocked: document.querySelector("#unlocked-placeholder"),
+  cakeStage: document.querySelector("#cake-stage"),
   fireworksCanvas: document.querySelector("#fireworks-canvas"),
   revealStage: document.querySelector("#reveal-stage"),
   revealMessage: document.querySelector("#reveal-message"),
@@ -155,9 +157,14 @@ function init() {
 
   initVisitorTilt();
 
-  // Setup Fireworks and Reveal managers
+  // Setup Cake Ceremony, Fireworks and Reveal managers
+  let cakeCeremony = null;
   let fireworks = null;
   let revealSequence = null;
+
+  if (elements.cakeStage) {
+    cakeCeremony = initCakeCeremony(elements.cakeStage);
+  }
 
   if (elements.fireworksCanvas) {
     fireworks = new FireworksEngine(elements.fireworksCanvas);
@@ -194,15 +201,25 @@ function init() {
 
     window.setTimeout(() => {
       elements.openingStage.hidden = true;
-      if (fireworks) {
-        // Start 4-loop audio synchronized with ~27s fireworks show
-        startFireworksAudio();
 
-        fireworks.start(() => {
-          if (revealSequence) {
-            revealSequence.startReveal();
-          }
-        });
+      const startFireworksShow = () => {
+        if (fireworks) {
+          // Start 4-loop audio synchronized with ~27s fireworks show
+          startFireworksAudio();
+
+          fireworks.start(() => {
+            if (revealSequence) {
+              revealSequence.startReveal();
+            }
+          });
+        }
+      };
+
+      // Route through Cake Ceremony -> then start existing Fireworks
+      if (cakeCeremony) {
+        cakeCeremony.start(startFireworksShow);
+      } else {
+        startFireworksShow();
       }
     }, 750);
   }
