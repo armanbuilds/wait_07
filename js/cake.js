@@ -86,12 +86,15 @@ export function initCakeCeremony(stage) {
     if (state !== "first-loading") return;
     state = "nothing";
     showQuestion("There is nothing for you! 😂");
+    conceal(actions);
+    actions.hidden = true;
     await wait(PRANK_HOLD_MS);
     if (state !== "nothing") return;
     state = "wait-question";
     panel.classList.add("is-card-flipping");
     await wait(500);
     copy.textContent = "WAIT! I have something to show you... 👀✨";
+    reveal(actions);
     await wait(500);
     panel.classList.remove("is-card-flipping");
   }
