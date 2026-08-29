@@ -93,7 +93,7 @@ export function initCakeCeremony(stage) {
     state = "wait-question";
     panel.classList.add("is-card-flipping");
     await wait(500);
-    copy.textContent = "WAIT! I have something to show you... 👀✨";
+    copy.textContent = "WAIT! I have something to show you... 👀✨. Do you wanna see ?" ;
     reveal(actions);
     await wait(500);
     panel.classList.remove("is-card-flipping");
