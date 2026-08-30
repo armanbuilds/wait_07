@@ -187,6 +187,55 @@
       </div>
     </section>
 
+    <!-- Photo Memory Cinematic Montage Stage -->
+    <section id="photo-stage" class="photo-stage" aria-live="polite" hidden>
+      <div class="photo-stage__vignette" aria-hidden="true"></div>
+      <div class="photo-stage__grain" aria-hidden="true"></div>
+      <div class="photo-ambient photo-ambient--1" aria-hidden="true"></div>
+      <div class="photo-ambient photo-ambient--2" aria-hidden="true"></div>
+      <div id="photo-flash" class="photo-stage__flash" aria-hidden="true"></div>
+
+      <!-- 1. Intro Screen: "Now see what I have collected for you... ✨" -->
+      <div id="photo-intro-panel" class="photo-panel photo-intro-panel" hidden>
+        <span class="photo-panel__border" aria-hidden="true"></span>
+        <span class="photo-panel__glow" aria-hidden="true"></span>
+        <div class="photo-panel__inner">
+          <p class="photo-intro-text">Now see what I have collected for you... ✨</p>
+        </div>
+      </div>
+
+      <!-- 2. Cinematic Montage Viewport -->
+      <div id="photo-montage" class="photo-montage" hidden>
+        <div id="photo-slide-a" class="photo-slide photo-slide--a">
+          <div class="photo-bg-wrap">
+            <img id="photo-bg-a" class="photo-bg" src="" alt="" aria-hidden="true" />
+          </div>
+          <div class="photo-fg-wrap">
+            <img id="photo-fg-a" class="photo-fg" src="" alt="Memory Photograph" />
+          </div>
+        </div>
+        <div id="photo-slide-b" class="photo-slide photo-slide--b">
+          <div class="photo-bg-wrap">
+            <img id="photo-bg-b" class="photo-bg" src="" alt="" aria-hidden="true" />
+          </div>
+          <div class="photo-fg-wrap">
+            <img id="photo-fg-b" class="photo-fg" src="" alt="Memory Photograph" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Outro Screen: Final Cinematic Message Box -->
+      <div id="photo-outro-panel" class="photo-panel photo-outro-panel" hidden>
+        <span class="photo-panel__border" aria-hidden="true"></span>
+        <span class="photo-panel__glow" aria-hidden="true"></span>
+        <div class="photo-panel__inner">
+          <p class="photo-outro-line photo-outro-line--1">This is what I can do for you... ✨</p>
+          <p class="photo-outro-line photo-outro-line--2">But there is one more thing to show you!</p>
+          <p class="photo-outro-line photo-outro-line--3">So be ready... 👀🔥</p>
+        </div>
+      </div>
+    </section>
+
     <canvas id="fireworks-canvas" class="fireworks-canvas" aria-hidden="true" hidden></canvas>
     
     <div id="reveal-stage" class="reveal-stage" aria-live="polite" hidden>

@@ -3,6 +3,7 @@ import { recordVisit } from "./visitor.js";
 import { startCountdown } from "./countdown.js";
 import { initPrankManager } from "./prank.js";
 import { initCakeCeremony } from "./cake.js";
+import { initPhotoMemory } from "./photo.js";
 import { FireworksEngine } from "./fireworks.js";
 import { initRevealSequence } from "./reveal.js";
 import { startFireworksAudio } from "./audio.js";
@@ -29,6 +30,7 @@ const elements = {
   seconds: document.querySelector("#seconds"),
   unlocked: document.querySelector("#unlocked-placeholder"),
   cakeStage: document.querySelector("#cake-stage"),
+  photoStage: document.querySelector("#photo-stage"),
   fireworksCanvas: document.querySelector("#fireworks-canvas"),
   revealStage: document.querySelector("#reveal-stage"),
   revealMessage: document.querySelector("#reveal-message"),
@@ -157,13 +159,18 @@ function init() {
 
   initVisitorTilt();
 
-  // Setup Cake Ceremony, Fireworks and Reveal managers
+  // Setup Cake Ceremony, Photo Memory, Fireworks and Reveal managers
   let cakeCeremony = null;
+  let photoMemory = null;
   let fireworks = null;
   let revealSequence = null;
 
   if (elements.cakeStage) {
     cakeCeremony = initCakeCeremony(elements.cakeStage);
+  }
+
+  if (elements.photoStage) {
+    photoMemory = initPhotoMemory(elements.photoStage);
   }
 
   if (elements.fireworksCanvas) {
@@ -215,11 +222,19 @@ function init() {
         }
       };
 
-      // Route through Cake Ceremony -> then start existing Fireworks
+      const startPhotoSequence = () => {
+        if (photoMemory) {
+          photoMemory.start(startFireworksShow);
+        } else {
+          startFireworksShow();
+        }
+      };
+
+      // Route through Cake Ceremony -> Photo Memory -> Fireworks
       if (cakeCeremony) {
-        cakeCeremony.start(startFireworksShow);
+        cakeCeremony.start(startPhotoSequence);
       } else {
-        startFireworksShow();
+        startPhotoSequence();
       }
     }, 750);
   }
