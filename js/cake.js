@@ -17,7 +17,8 @@ export function initCakeCeremony(stage) {
   let finished = false;
   let state = "idle";
   let noOffset = { x: 0, y: 0 };
-  let postVideoNoPrankShown = false;
+  let postVideoNoClicks = 0;
+  let completeCallback = null;
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
   const reveal = (element) => {
@@ -122,20 +123,9 @@ export function initCakeCeremony(stage) {
 
   async function showPostVideoQuestion() {
     state = "post-video-question";
-    postVideoNoPrankShown = false;
+    postVideoNoClicks = 0;
     conceal(frame);
     await wait(650);
-    showQuestion("Do you want to see something MORE? ✨");
-  }
-
-  async function showPostVideoNoPrank() {
-    conceal(panel);
-    conceal(actions);
-    await wait(450);
-    copy.innerHTML = "Nice try... 😏<br />You really thought I would let you leave?";
-    reveal(panel);
-    await wait(1800);
-    if (state !== "post-video-question") return;
     showQuestion("Do you want to see something MORE? ✨");
   }
 
@@ -153,22 +143,32 @@ export function initCakeCeremony(stage) {
     if (typeof onComplete === "function") onComplete();
   }
 
-  function handleYes(onComplete) {
+  function handleYes() {
     if (state === "intro-question") showNothingPrank();
     else if (state === "wait-question") showCakeIntro();
-    else if (state === "post-video-question") handoff(onComplete);
+    else if (state === "post-video-question") handoff(completeCallback);
   }
 
-  function handleNo(event) {
+  async function handleNo(event) {
     event.preventDefault();
     if (state === "intro-question" || state === "wait-question") {
       moveNoButton(event);
-    } else if (state === "post-video-question") {
-      if (!postVideoNoPrankShown) {
-        postVideoNoPrankShown = true;
-        showPostVideoNoPrank();
-      } else {
-        moveNoButton(event);
+      return;
+    }
+
+    if (state === "post-video-question") {
+      if (postVideoNoClicks === 0) {
+        postVideoNoClicks = 1;
+        copy.innerHTML = `NO? Teri marzi kab se chalne lagi? 💀😂<span style="display:block;font-size:clamp(0.85rem,2.2vw,1.1rem);font-family:system-ui,sans-serif;font-weight:500;letter-spacing:0.04em;margin-top:0.85rem;opacity:0.85;text-shadow:none;">Choose Yes or No to move next</span>`;
+      } else if (postVideoNoClicks === 1) {
+        postVideoNoClicks = 2;
+        state = "post-video-final";
+        conceal(actions);
+        actions.hidden = true;
+        copy.innerHTML = `pata hi cc tera minu .<br />wait ! i will do now myself`;
+        await wait(5000);
+        await runLoader(FIRST_LOADING_MS);
+        await handoff(completeCallback);
       }
     }
   }
@@ -176,12 +176,13 @@ export function initCakeCeremony(stage) {
   function bindListeners(onComplete) {
     if (listenersBound) return;
     listenersBound = true;
-    yes.addEventListener("click", () => handleYes(onComplete));
+    completeCallback = onComplete;
+    yes.addEventListener("click", handleYes);
     no.addEventListener("pointerenter", (event) => {
-      if (state === "intro-question" || state === "wait-question" || (state === "post-video-question" && postVideoNoPrankShown)) moveNoButton(event);
+      if (state === "intro-question" || state === "wait-question") moveNoButton(event);
     });
     no.addEventListener("pointerdown", (event) => {
-      if (state === "intro-question" || state === "wait-question" || (state === "post-video-question" && postVideoNoPrankShown)) {
+      if (state === "intro-question" || state === "wait-question") {
         event.preventDefault();
         moveNoButton(event);
       }

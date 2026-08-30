@@ -1612,3 +1612,14 @@ body.is-fireworks-active {
   justify-content: center;
   box-sizing: border-box;
 }
+
+/* The post-video NO control uses this same button; keep its whole surface interactive. */
+#ceremony-no {
+  position: relative;
+  z-index: 21;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
