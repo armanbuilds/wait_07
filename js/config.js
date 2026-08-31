@@ -8,9 +8,9 @@ export const testMode = false;
 export const BIRTHDAY = {
   year: 2026,
   month: 8,
-  day: 30,
-  hour: 23,
-  minute: 30,
+  day: 31,
+  hour: 14,
+  minute: 35,
   second: 0,
   timeZone: "Asia/Karachi",
 };
