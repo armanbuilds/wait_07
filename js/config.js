@@ -9,8 +9,8 @@ export const BIRTHDAY = {
   year: 2026,
   month: 8,
   day: 31,
-  hour: 14,
-  minute: 35,
+  hour: 16,
+  minute: 25,
   second: 0,
   timeZone: "Asia/Karachi",
 };
