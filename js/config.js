@@ -3,14 +3,14 @@
  * Change the birthday target and visit messages here only.
  */
 
-export const testMode = true;
+export const testMode = false;
 
 export const BIRTHDAY = {
   year: 2026,
-  month: 9,
-  day: 7,
-  hour: 0,
-  minute: 0,
+  month: 8,
+  day: 30,
+  hour: 23,
+  minute: 30,
   second: 0,
   timeZone: "Asia/Karachi",
 };
@@ -36,8 +36,8 @@ export const MESSAGES = {
 };
 
 export const PRANK_MESSAGES = {
-  click1: "INITIALIZING EXPERIENCE...",
-  click2: "RUNNING ERROR... PLEASE TRY AGAIN",
+  click1: "⚠️ Unexpected error detected... Please try again",
+  click2: "🚨 Service unavailable! Something went seriously wrong... 😭",
   click3: "SERVICE CRASHED... TRY AGAIN",
 };
 

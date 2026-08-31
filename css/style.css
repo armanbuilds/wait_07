@@ -121,8 +121,21 @@ body {
 }
 
 .opening-layer.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
   pointer-events: auto;
   animation: emerge 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.opening-layer.is-leaving {
+  opacity: 0 !important;
+  transform: translateY(-0.8rem) scale(0.96) !important;
+  filter: blur(12px) !important;
+  pointer-events: none !important;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.65s ease !important;
 }
 
 .visitor-box {
@@ -350,6 +363,16 @@ body {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(0.65rem, 2vw, 1rem);
+}
+
+.countdown.is-leaving {
+  opacity: 0 !important;
+  transform: translateY(-0.8rem) scale(0.96) !important;
+  filter: blur(12px) !important;
+  pointer-events: none !important;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.65s ease !important;
 }
 
 .countdown-unit {
@@ -1032,6 +1055,8 @@ body.is-fireworks-active {
    Prank Button State Variations
    ========================================================================== */
 .start-button.is-loading {
+  opacity: 1;
+  filter: blur(0);
   border-color: rgba(160, 140, 255, 0.7);
   box-shadow:
     0 0 35px rgba(140, 120, 255, 0.4),
@@ -1040,6 +1065,8 @@ body.is-fireworks-active {
 }
 
 .start-button.is-error {
+  opacity: 1;
+  filter: blur(0);
   border-color: rgba(235, 75, 75, 0.85);
   color: #ffdddd;
   background: linear-gradient(180deg,
@@ -1053,6 +1080,8 @@ body.is-fireworks-active {
 }
 
 .start-button.is-glitch {
+  opacity: 1;
+  filter: blur(0);
   font-family: var(--mono);
   border-color: rgba(0, 220, 255, 0.8);
   color: #61f2ff;
@@ -1069,7 +1098,7 @@ body.is-fireworks-active {
 @keyframes button-pulse {
   from {
     transform: scale(0.99);
-    opacity: 0.85;
+    opacity: 0.92;
   }
 
   to {

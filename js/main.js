@@ -1,6 +1,6 @@
 import { MESSAGES, getVisitorMessage, testMode } from "./config.js";
 import { recordVisit } from "./visitor.js";
-import { startCountdown } from "./countdown.js";
+import { startCountdown, getTimeRemaining } from "./countdown.js";
 import { initPrankManager } from "./prank.js";
 import { initCakeCeremony } from "./cake.js";
 import { initPhotoMemory } from "./photo.js";
@@ -21,6 +21,7 @@ const elements = {
   visitorMessage: document.querySelector("#visitor-message"),
   experienceBox: document.querySelector("#experience-box"),
   mainMessage: document.querySelector("#main-message"),
+  waitoverBox: document.querySelector("#waitover-box"),
   startButton: document.querySelector("#start-button"),
   startText: document.querySelector(".start-button__text"),
   countdown: document.querySelector("#countdown"),
@@ -55,20 +56,44 @@ function revealLayer(element) {
 }
 
 function renderCountdown(remaining) {
-  elements.days.textContent = remaining.display.days;
-  elements.hours.textContent = remaining.display.hours;
-  elements.minutes.textContent = remaining.display.minutes;
-  elements.seconds.textContent = remaining.display.seconds;
+  if (elements.days) elements.days.textContent = remaining.display.days;
+  if (elements.hours) elements.hours.textContent = remaining.display.hours;
+  if (elements.minutes) elements.minutes.textContent = remaining.display.minutes;
+  if (elements.seconds) elements.seconds.textContent = remaining.display.seconds;
 }
 
-function showUnlockedState() {
-  if (elements.openingStage) {
-    elements.openingStage.hidden = true;
+async function handleCountdownReached() {
+  if (elements.visitorBox) {
+    elements.visitorBox.classList.add("is-leaving");
   }
-  if (elements.unlocked) {
-    elements.unlocked.hidden = false;
-    elements.unlocked.textContent = MESSAGES.unlockedPlaceholder;
-    elements.unlocked.classList.add("is-visible");
+  if (elements.experienceBox) {
+    elements.experienceBox.classList.add("is-leaving");
+  }
+  if (elements.countdown) {
+    elements.countdown.classList.add("is-leaving");
+  }
+
+  await wait(600);
+
+  if (elements.visitorBox) {
+    elements.visitorBox.hidden = true;
+  }
+  if (elements.experienceBox) {
+    elements.experienceBox.hidden = true;
+  }
+  if (elements.countdown) {
+    elements.countdown.hidden = true;
+  }
+
+  if (elements.waitoverBox) {
+    elements.waitoverBox.hidden = false;
+    revealLayer(elements.waitoverBox);
+    await wait(EXPERIENCE_FOLLOW_MS);
+  }
+
+  if (elements.startButton) {
+    elements.startButton.hidden = false;
+    revealLayer(elements.startButton);
   }
 }
 
@@ -115,37 +140,45 @@ function initVisitorTilt() {
 }
 
 async function playOpeningSequence(visitCount) {
-  elements.visitorMessage.textContent = getVisitorMessage(visitCount);
-  elements.mainMessage.textContent = MESSAGES.experienceWaiting;
+  const remaining = getTimeRemaining();
 
-  await wait(DARK_BEAT_MS);
-  revealLayer(elements.visitorBox);
-  await wait(VISITOR_SETTLE_MS);
-  revealLayer(elements.experienceBox);
-  await wait(EXPERIENCE_FOLLOW_MS);
+  if (testMode || remaining.reached) {
+    if (elements.visitorBox) elements.visitorBox.hidden = true;
+    if (elements.experienceBox) elements.experienceBox.hidden = true;
+    if (elements.countdown) elements.countdown.hidden = true;
 
-  if (elements.unlocked && !elements.unlocked.hidden) {
-    return;
-  }
+    await wait(DARK_BEAT_MS);
 
-  if (testMode) {
-    if (elements.countdown) {
-      elements.countdown.hidden = true;
+    if (elements.waitoverBox) {
+      elements.waitoverBox.hidden = false;
+      revealLayer(elements.waitoverBox);
+      await wait(EXPERIENCE_FOLLOW_MS);
     }
     if (elements.startButton) {
       elements.startButton.hidden = false;
       revealLayer(elements.startButton);
     }
-    await wait(COUNTDOWN_FOLLOW_MS);
   } else {
+    if (elements.waitoverBox) {
+      elements.waitoverBox.hidden = true;
+    }
     if (elements.startButton) {
       elements.startButton.hidden = true;
     }
+
+    elements.visitorMessage.textContent = getVisitorMessage(visitCount);
+    elements.mainMessage.textContent = MESSAGES.experienceWaiting;
+
+    await wait(DARK_BEAT_MS);
+    revealLayer(elements.visitorBox);
+    await wait(VISITOR_SETTLE_MS);
+    revealLayer(elements.experienceBox);
+    await wait(EXPERIENCE_FOLLOW_MS);
+
     if (elements.countdown) {
       elements.countdown.hidden = false;
       revealLayer(elements.countdown);
     }
-    await wait(COUNTDOWN_FOLLOW_MS);
   }
 }
 
@@ -250,7 +283,7 @@ function init() {
         renderCountdown(remaining);
       },
       () => {
-        showUnlockedState();
+        handleCountdownReached();
       }
     );
   }

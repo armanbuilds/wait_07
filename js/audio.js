@@ -1,57 +1,112 @@
 /**
- * Audio Controller for Fireworks Experience
- * Synchronizes playback of assets/audio/firework.wav across exactly 4 loops (~27 seconds).
+ * Audio Controller for Birthday Experience
+ * Manages fireworks audio and photo memory soundtrack.
  */
 
-const AUDIO_SRC = "assets/audio/firework.wav";
-const MAX_LOOPS = 4;
+const FIREWORKS_AUDIO_SRC = "assets/audio/fireworks.mpeg";
+const PHOTO_AUDIO_SRC = "assets/audio/photo.mpeg";
+const FIREWORKS_MAX_LOOPS = 4;
 
-let audioElement = null;
-let currentLoop = 0;
-let isPlaying = false;
-let onAudioCompleteCallback = null;
+let fireworksAudio = null;
+let fireworksLoopCount = 0;
+let isFireworksPlaying = false;
+let onFireworksCompleteCallback = null;
 
-function getAudioInstance() {
-  if (!audioElement) {
-    audioElement = new Audio(AUDIO_SRC);
-    audioElement.preload = "auto";
+let photoAudio = null;
+let isPhotoPlaying = false;
 
-    audioElement.addEventListener("ended", () => {
-      currentLoop++;
-      if (currentLoop < MAX_LOOPS && isPlaying) {
-        audioElement.currentTime = 0;
-        audioElement.play().catch((err) => {
+function getFireworksAudioInstance() {
+  if (!fireworksAudio) {
+    fireworksAudio = new Audio(FIREWORKS_AUDIO_SRC);
+    fireworksAudio.preload = "auto";
+
+    fireworksAudio.addEventListener("ended", () => {
+      fireworksLoopCount++;
+      if (fireworksLoopCount < FIREWORKS_MAX_LOOPS && isFireworksPlaying) {
+        fireworksAudio.currentTime = 0;
+        fireworksAudio.play().catch((err) => {
           console.warn("Fireworks audio play blocked:", err);
         });
       } else {
         stopFireworksAudio();
-        if (typeof onAudioCompleteCallback === "function") {
-          onAudioCompleteCallback();
+        if (typeof onFireworksCompleteCallback === "function") {
+          onFireworksCompleteCallback();
         }
       }
     });
   }
-  return audioElement;
+  return fireworksAudio;
 }
 
 export function startFireworksAudio(onComplete) {
   stopFireworksAudio();
 
-  onAudioCompleteCallback = onComplete || null;
-  currentLoop = 0;
-  isPlaying = true;
+  onFireworksCompleteCallback = onComplete || null;
+  fireworksLoopCount = 0;
+  isFireworksPlaying = true;
 
-  const audio = getAudioInstance();
+  const audio = getFireworksAudioInstance();
   audio.currentTime = 0;
+  audio.volume = 1.0;
   audio.play().catch((err) => {
     console.warn("Fireworks audio play error or user interaction required:", err);
   });
 }
 
 export function stopFireworksAudio() {
-  isPlaying = false;
-  if (audioElement) {
-    audioElement.pause();
-    audioElement.currentTime = 0;
+  isFireworksPlaying = false;
+  if (fireworksAudio) {
+    fireworksAudio.pause();
+    fireworksAudio.currentTime = 0;
+  }
+}
+
+function getPhotoAudioInstance() {
+  if (!photoAudio) {
+    photoAudio = new Audio(PHOTO_AUDIO_SRC);
+    photoAudio.preload = "auto";
+    photoAudio.loop = true;
+  }
+  return photoAudio;
+}
+
+export function startPhotoAudio() {
+  stopPhotoAudio(0);
+  isPhotoPlaying = true;
+
+  const audio = getPhotoAudioInstance();
+  audio.currentTime = 0;
+  audio.volume = 1.0;
+  audio.play().catch((err) => {
+    console.warn("Photo audio play error or user interaction required:", err);
+  });
+}
+
+export function stopPhotoAudio(fadeDuration = 600) {
+  isPhotoPlaying = false;
+  if (!photoAudio) return;
+
+  if (fadeDuration > 0 && !photoAudio.paused) {
+    const startVol = photoAudio.volume;
+    const startTime = performance.now();
+
+    function fadeStep() {
+      const elapsed = performance.now() - startTime;
+      const progress = Math.min(elapsed / fadeDuration, 1);
+      photoAudio.volume = Math.max(0, startVol * (1 - progress));
+
+      if (progress < 1 && !isPhotoPlaying) {
+        requestAnimationFrame(fadeStep);
+      } else if (!isPhotoPlaying) {
+        photoAudio.pause();
+        photoAudio.currentTime = 0;
+        photoAudio.volume = 1.0;
+      }
+    }
+    requestAnimationFrame(fadeStep);
+  } else {
+    photoAudio.pause();
+    photoAudio.currentTime = 0;
+    photoAudio.volume = 1.0;
   }
 }

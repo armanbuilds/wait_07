@@ -1,3 +1,5 @@
+import { startPhotoAudio, stopPhotoAudio } from "./audio.js";
+
 /**
  * Premium Cinematic Photo Memory Montage Controller
  * Implements high-end camera movements, viewport-aware responsive scaling,
@@ -154,6 +156,9 @@ export function initPhotoMemory(stageElement) {
     void stageElement.offsetWidth;
     stageElement.classList.add("is-visible");
 
+    // Start photo soundtrack
+    startPhotoAudio();
+
     // ==========================================
     // STEP 1: INTRO MESSAGE (5s)
     // "Now see what I have collected for you... ✨"
@@ -224,6 +229,9 @@ export function initPhotoMemory(stageElement) {
     // ==========================================
     // STEP 4: SEAMLESS HANDOFF TO FIREWORKS
     // ==========================================
+    // Gently fade out and stop photo audio before fireworks start
+    stopPhotoAudio(700);
+
     stageElement.classList.remove("is-visible");
     stageElement.classList.add("is-exiting");
     await wait(750);
