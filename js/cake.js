@@ -86,7 +86,7 @@ export function initCakeCeremony(stage) {
     await runLoader(FIRST_LOADING_MS);
     if (state !== "first-loading") return;
     state = "nothing";
-    showQuestion("There is nothing for you! 😂");
+    showQuestion("There is nothing for you! 😂 LOL 😂😂😂");
     conceal(actions);
     actions.hidden = true;
     await wait(PRANK_HOLD_MS);
