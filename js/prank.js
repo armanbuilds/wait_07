@@ -1,92 +1,106 @@
-import { MESSAGES, PRANK_MESSAGES } from "./config.js";
+/** Keeps the entry interaction separate from the existing birthday launch flow. */
+export function initPrankManager(buttonElement, _buttonTextElement, onPrankComplete) {
+  const errorStates = [
+    ["404 — Page not found", "The requested experience could not be loaded."],
+    ["503 — Service temporarily unavailable", "We're having trouble connecting to this experience. Please try again."],
+    ["502 — Bad gateway", "The experience is taking longer than expected to respond."],
+    ["504 — Gateway timeout", "The server did not respond in time. Reconnecting one last time…"],
+  ];
+  let attempt = 0;
+  let isBusy = false;
+  let hasLaunched = false;
+  let timerId = null;
+  let overlay = null;
+  let retryButton = null;
 
-/**
- * Manages the 4-click theatrical prank state sequence.
- * 
- * Click 1: "INITIALIZING EXPERIENCE..." (loading state)
- * Click 2: "RUNNING ERROR... PLEASE TRY AGAIN" (error state)
- * Click 3: "SERVICE CRASHED... TRY AGAIN" (glitch state)
- * Click 4: Launches main fireworks experience
- */
-export function initPrankManager(buttonElement, buttonTextElement, onPrankComplete) {
-  let clickCount = 0;
-  let isDebouncing = false;
-
-  const defaultText = MESSAGES.entryButtonDefault || "ENTER TO VIEW AN EXPERIENCE";
-
-  function getTextElement() {
-    if (buttonTextElement) {
-      return buttonTextElement;
-    }
-    if (buttonElement) {
-      return buttonElement.querySelector(".start-button__text") || buttonElement;
-    }
-    return null;
-  }
-
-  function setButtonState(text, stateClass) {
-    const textEl = getTextElement();
-    if (textEl) {
-      textEl.textContent = text;
-    }
-    if (buttonElement) {
-      buttonElement.classList.remove("is-loading", "is-error", "is-glitch");
-      if (stateClass) {
-        buttonElement.classList.add(stateClass);
-      }
+  function clearPendingTimer() {
+    if (timerId !== null) {
+      window.clearTimeout(timerId);
+      timerId = null;
     }
   }
 
-  function handleClick(event) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  function showError(index) {
+    const [code, message] = errorStates[index];
+    overlay.querySelector(".server-error__title").textContent = code;
+    overlay.querySelector(".server-error__message").textContent = message;
+    overlay.querySelector(".server-error__loading").hidden = true;
+    overlay.querySelector(".server-error__action").hidden = false;
+    retryButton.disabled = false;
+    overlay.classList.remove("is-loading");
+    overlay.classList.add("is-visible");
+    isBusy = false;
+  }
 
-    if (!buttonElement || isDebouncing) {
-      return;
-    }
+  function launchExperience() {
+    if (hasLaunched) return;
+    hasLaunched = true;
+    clearPendingTimer();
+    retryButton?.removeEventListener("click", handleRetry);
+    buttonElement?.removeEventListener("click", handleEntry);
+    overlay?.classList.add("is-leaving");
+    timerId = window.setTimeout(() => {
+      overlay?.remove();
+      overlay = null;
+      timerId = null;
+    }, 220);
+    if (typeof onPrankComplete === "function") onPrankComplete();
+  }
 
-    // Debounce rapid double-clicks (250ms)
-    isDebouncing = true;
-    window.setTimeout(() => {
-      isDebouncing = false;
-    }, 250);
-
-    clickCount += 1;
-
-    if (clickCount === 1) {
-      setButtonState(PRANK_MESSAGES.click1, "is-loading");
-    } else if (clickCount === 2) {
-      setButtonState(PRANK_MESSAGES.click2, "is-error");
-    } else if (clickCount === 3) {
-      setButtonState(PRANK_MESSAGES.click3, "is-glitch");
-    } else if (clickCount >= 4) {
-      buttonElement.disabled = true;
-      buttonElement.classList.remove("is-loading", "is-error", "is-glitch");
-      if (typeof onPrankComplete === "function") {
-        onPrankComplete();
-      }
+  function completeReconnect() {
+    timerId = null;
+    showError(attempt);
+    if (attempt === errorStates.length - 1) {
+      timerId = window.setTimeout(launchExperience, 1050);
     }
   }
 
-  if (buttonElement) {
-    buttonElement.addEventListener("click", handleClick);
-    // Ensure initial text is ready
-    setButtonState(defaultText, null);
+  function handleRetry(event) {
+    event.preventDefault();
+    if (isBusy || hasLaunched) return;
+    isBusy = true;
+    attempt += 1;
+    retryButton.disabled = true;
+    overlay.querySelector(".server-error__action").hidden = true;
+    overlay.querySelector(".server-error__loading").hidden = false;
+    overlay.classList.add("is-loading");
+    clearPendingTimer();
+    timerId = window.setTimeout(completeReconnect, 1250);
   }
 
+  function handleEntry(event) {
+    event.preventDefault();
+    if (isBusy || hasLaunched || overlay) return;
+    isBusy = true;
+    buttonElement.disabled = true;
+    overlay = document.createElement("section");
+    overlay.className = "server-error";
+    overlay.setAttribute("aria-live", "polite");
+    overlay.setAttribute("aria-label", "Connection error");
+    overlay.innerHTML = `<div class="server-error__content"><div class="server-error__copy"><p class="server-error__eyebrow">Connection problem</p><h1 class="server-error__title"></h1><p class="server-error__message"></p></div><div class="server-error__action"><button class="server-error__retry" type="button">Try again</button></div><div class="server-error__loading" hidden aria-label="Reconnecting"><span class="server-error__spinner" aria-hidden="true"></span><span>Reconnecting</span></div></div>`;
+    document.body.append(overlay);
+    retryButton = overlay.querySelector(".server-error__retry");
+    retryButton.addEventListener("click", handleRetry);
+    showError(attempt);
+  }
+
+  buttonElement?.addEventListener("click", handleEntry);
   return {
     reset() {
-      clickCount = 0;
-      isDebouncing = false;
-      if (buttonElement) {
-        buttonElement.disabled = false;
-      }
-      setButtonState(defaultText, null);
+      clearPendingTimer();
+      retryButton?.removeEventListener("click", handleRetry);
+      overlay?.remove();
+      overlay = null;
+      retryButton = null;
+      attempt = 0;
+      isBusy = false;
+      hasLaunched = false;
+      if (buttonElement) buttonElement.disabled = false;
     },
-    getClickCount() {
-      return clickCount;
+    destroy() {
+      this.reset();
+      buttonElement?.removeEventListener("click", handleEntry);
     },
+    getClickCount() { return attempt + (overlay ? 1 : 0); },
   };
 }
